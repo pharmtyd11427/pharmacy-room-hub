@@ -50,6 +50,14 @@
         .notice{background:var(--notice-bg);padding:10px;border-radius:9px;font-size:10px;color:var(--notice-text);margin-top:12px}.mobile{display:none}
         @media(max-width:760px){.side{width:190px;transform:translateX(-100%);z-index:4}.side.open{transform:none}.main{margin:0;padding:0 12px}.mobile{display:inline-block}.top b{font-size:15px}.search{display:none}.hero{display:block;padding:20px}.hero h1{font-size:20px}.hero .btn{margin-top:9px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.quick{grid-template-columns:1fr 1fr}.page{overflow:auto}.table{min-width:520px}}
 
+        /* ตัวเลือกไอคอนในฟอร์มโปรแกรม */
+        .hub-icons{position:relative;display:flex;flex-wrap:wrap;gap:8px}
+        .hub-icons input{position:absolute;opacity:0;pointer-events:none}
+        .hub-icons label{display:grid;place-items:center;width:46px;height:46px;font-size:24px;line-height:1;border:2px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:border-color .15s,background-color .15s,box-shadow .15s}
+        .hub-icons label:hover{border-color:var(--brand)}
+        .hub-icons input:checked+label{border-color:var(--brand);background:var(--nav-on-bg);box-shadow:0 0 0 3px #1f8a6833}
+        .hub-icons input:focus-visible+label{outline:2px solid var(--brand);outline-offset:2px}
+
         /* SweetAlert2 ให้ตามธีม */
         body .swal2-popup{background:var(--surface);color:var(--text)}
         body .swal2-title,body .swal2-html-container{color:var(--text)}
@@ -145,10 +153,15 @@ document.getElementById('addUserBtn').addEventListener('click',()=>userFormDialo
 // ตรวจ session ที่เก็บไว้ด้วย whoami (ใช้ได้แม้บัญชียังต้องเปลี่ยนรหัสผ่าน)
 async function validateRestoredSession(){if(!currentUser)return;try{const r=await hubApi('whoami');currentUser={...currentUser,...r.user};sessionStorage.setItem('pharmacyHubUser',JSON.stringify(currentUser));updateLoginUi();setUserAdminVisibility();if(currentUser.role==='admin')await refreshUsers();if(currentUser.mustChangePassword)await changePasswordDialog();loadPrograms()}catch{currentUser=null;sessionStorage.removeItem('pharmacyHubUser');updateLoginUi();setUserAdminVisibility()}}if(currentUser)validateRestoredSession();
 // ===== ฟอร์มเพิ่มรายการ (ฟิลด์ตรงกับหัวคอลัมน์ในชีต) =====
+const HUB_ICONS=[
+  {v:'💊',t:'ยา / ระบบบริหารยา'},{v:'📊',t:'รายงาน / ข้อมูล'},{v:'📁',t:'เอกสาร / ไฟล์'},
+  {v:'🧪',t:'ห้องปฏิบัติการ'},{v:'📋',t:'รายการ / แบบฟอร์ม'},{v:'🌐',t:'เว็บไซต์ทั่วไป'}
+];
 const HUB_FORMS={
   Programs:{title:'เพิ่มโปรแกรม',fields:[
     {name:'name',label:'หัวข้อ (ชื่อโปรแกรม)',max:120,required:true},
     {name:'url',label:'URL',type:'url',max:500,required:true,placeholder:'https://',pattern:'https?://\\S+',invalid:'กรุณากรอก URL ที่ขึ้นต้นด้วย http:// หรือ https://'},
+    {name:'icon',label:'ไอคอน',type:'icons',options:HUB_ICONS},
     {name:'description',label:'รายละเอียด (ไม่บังคับ)',type:'textarea',max:1000}]},
   Tasks:{title:'เพิ่มงาน',fields:[
     {name:'title',label:'ชื่องาน',max:160,required:true},
@@ -169,6 +182,7 @@ const HUB_FORMS={
 const HUB_MODALS={'โปรแกรม':'Programs','งานใหม่':'Tasks','งาน':'Tasks','กิจกรรม':'Events','การลา':'Leave'};
 function hubFormHtml(fields){
   return '<form id="hubRecordForm" class="needs-validation text-start" novalidate>'+fields.map(f=>{
+    if(f.type==='icons')return '<label class="form-label">'+f.label+'</label><div class="hub-icons mb-3" role="radiogroup" aria-label="'+f.label+'">'+f.options.map((o,i)=>'<input type="radio" name="'+f.name+'" id="hubicon_'+i+'" value="'+o.v+'"'+(i===0?' checked':'')+'><label for="hubicon_'+i+'" title="'+o.t+'" aria-label="'+o.t+'">'+o.v+'</label>').join('')+'</div>';
     const id='hubf_'+f.name,req=f.required?' required':'',max=f.max?' maxlength="'+f.max+'"':'';
     const input=f.type==='textarea'
       ?'<textarea id="'+id+'" name="'+f.name+'" class="form-control mb-2" rows="3"'+max+req+'></textarea>'
