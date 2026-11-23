@@ -50,6 +50,14 @@
         .notice{background:var(--notice-bg);padding:10px;border-radius:9px;font-size:10px;color:var(--notice-text);margin-top:12px}.mobile{display:none}
         @media(max-width:760px){.side{width:190px;transform:translateX(-100%);z-index:4}.side.open{transform:none}.main{margin:0;padding:0 12px}.mobile{display:inline-block}.top b{font-size:15px}.search{display:none}.hero{display:block;padding:20px}.hero h1{font-size:20px}.hero .btn{margin-top:9px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.quick{grid-template-columns:1fr 1fr}.page{overflow:auto}.table{min-width:520px}}
 
+        /* ปุ่มแก้ไข/ลบโปรแกรม (แอดมิน) */
+        .prog{position:relative;min-width:0}
+        .prog>.link{display:block;height:100%;padding-right:74px}
+        .prog-tools{position:absolute;top:8px;right:8px;display:flex;gap:4px}
+        .prog-act{display:grid;place-items:center;width:28px;height:28px;padding:0;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;line-height:1;cursor:pointer}
+        .prog-act:hover{border-color:var(--brand)}
+        .prog-act.danger:hover{border-color:#c14242}
+
         /* ตัวเลือกไอคอนในฟอร์มโปรแกรม */
         .hub-icons{position:relative;display:flex;flex-wrap:wrap;gap:8px}
         .hub-icons input{position:absolute;opacity:0;pointer-events:none}
@@ -158,35 +166,40 @@ const HUB_ICONS=[
   {v:'🧪',t:'ห้องปฏิบัติการ'},{v:'📋',t:'รายการ / แบบฟอร์ม'},{v:'🌐',t:'เว็บไซต์ทั่วไป'}
 ];
 const HUB_FORMS={
-  Programs:{title:'เพิ่มโปรแกรม',fields:[
+  Programs:{title:'เพิ่มโปรแกรม',editTitle:'แก้ไขโปรแกรม',fields:[
     {name:'name',label:'หัวข้อ (ชื่อโปรแกรม)',max:120,required:true},
     {name:'url',label:'URL',type:'url',max:500,required:true,placeholder:'https://',pattern:'https?://\\S+',invalid:'กรุณากรอก URL ที่ขึ้นต้นด้วย http:// หรือ https://'},
     {name:'icon',label:'ไอคอน',type:'icons',options:HUB_ICONS},
     {name:'description',label:'รายละเอียด (ไม่บังคับ)',type:'textarea',max:1000}]},
-  Tasks:{title:'เพิ่มงาน',fields:[
+  Tasks:{title:'เพิ่มงาน',editTitle:'แก้ไขงาน',fields:[
     {name:'title',label:'ชื่องาน',max:160,required:true},
     {name:'description',label:'รายละเอียด',type:'textarea',max:2000},
     {name:'dueDate',label:'กำหนดส่ง',type:'date'}]},
-  Events:{title:'เพิ่มกิจกรรม',fields:[
+  Events:{title:'เพิ่มกิจกรรม',editTitle:'แก้ไขกิจกรรม',fields:[
     {name:'title',label:'ชื่อกิจกรรม',max:160,required:true},
     {name:'startDate',label:'วันที่เริ่ม',type:'date',required:true},
     {name:'endDate',label:'วันที่สิ้นสุด',type:'date'},
     {name:'location',label:'สถานที่',max:160},
     {name:'description',label:'รายละเอียด',type:'textarea',max:2000}]},
-  Leave:{title:'บันทึกการลา',fields:[
+  Leave:{title:'บันทึกการลา',editTitle:'แก้ไขการลา',fields:[
     {name:'leaveType',label:'ประเภทการลา',max:60,required:true,placeholder:'เช่น ลาพักผ่อน, ลาป่วย'},
     {name:'startDate',label:'วันที่เริ่มลา',type:'date',required:true},
     {name:'endDate',label:'วันที่สิ้นสุดการลา',type:'date',required:true},
     {name:'reason',label:'เหตุผล',type:'textarea',max:1000}]}
 };
 const HUB_MODALS={'โปรแกรม':'Programs','งานใหม่':'Tasks','งาน':'Tasks','กิจกรรม':'Events','การลา':'Leave'};
-function hubFormHtml(fields){
+const hubEsc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function hubFormHtml(fields,values={}){
   return '<form id="hubRecordForm" class="needs-validation text-start" novalidate>'+fields.map(f=>{
-    if(f.type==='icons')return '<label class="form-label">'+f.label+'</label><div class="hub-icons mb-3" role="radiogroup" aria-label="'+f.label+'">'+f.options.map((o,i)=>'<input type="radio" name="'+f.name+'" id="hubicon_'+i+'" value="'+o.v+'"'+(i===0?' checked':'')+'><label for="hubicon_'+i+'" title="'+o.t+'" aria-label="'+o.t+'">'+o.v+'</label>').join('')+'</div>';
+    const cur=values[f.name];
+    if(f.type==='icons'){
+      const has=f.options.some(o=>o.v===cur);
+      return '<label class="form-label">'+f.label+'</label><div class="hub-icons mb-3" role="radiogroup" aria-label="'+f.label+'">'+f.options.map((o,i)=>'<input type="radio" name="'+f.name+'" id="hubicon_'+i+'" value="'+o.v+'"'+((has?o.v===cur:i===0)?' checked':'')+'><label for="hubicon_'+i+'" title="'+o.t+'" aria-label="'+o.t+'">'+o.v+'</label>').join('')+'</div>';
+    }
     const id='hubf_'+f.name,req=f.required?' required':'',max=f.max?' maxlength="'+f.max+'"':'';
     const input=f.type==='textarea'
-      ?'<textarea id="'+id+'" name="'+f.name+'" class="form-control mb-2" rows="3"'+max+req+'></textarea>'
-      :'<input id="'+id+'" name="'+f.name+'" class="form-control mb-2" type="'+(f.type||'text')+'"'+max+req+(f.pattern?' pattern="'+f.pattern+'"':'')+(f.placeholder?' placeholder="'+f.placeholder+'"':'')+'>';
+      ?'<textarea id="'+id+'" name="'+f.name+'" class="form-control mb-2" rows="3"'+max+req+'>'+hubEsc(cur)+'</textarea>'
+      :'<input id="'+id+'" name="'+f.name+'" class="form-control mb-2" type="'+(f.type||'text')+'"'+max+req+(f.pattern?' pattern="'+f.pattern+'"':'')+(f.placeholder?' placeholder="'+f.placeholder+'"':'')+' value="'+hubEsc(cur)+'">';
     return '<label class="form-label" for="'+id+'">'+f.label+(f.required?' <span class="text-danger">*</span>':'')+'</label>'+input+'<div class="invalid-feedback mb-2">'+(f.invalid||'กรุณากรอก'+f.label)+'</div>';
   }).join('')+'</form>';
 }
@@ -195,7 +208,10 @@ function hubFormHtml(fields){
 const hubProgramBoxes=[document.querySelector('#programs .quick'),document.querySelector('#home .quick')];
 const hubProgramDefault=hubProgramBoxes.map(b=>b.innerHTML);
 function hubSafeUrl(u){try{const x=new URL(String(u));return x.protocol==='https:'||x.protocol==='http:'?x.href:''}catch{return ''}}
+let hubProgramList=[];
 function renderPrograms(list){
+  hubProgramList=list||[];
+  const admin=!!currentUser&&currentUser.role==='admin';
   hubProgramBoxes.forEach((box,i)=>{
     if(!list){box.innerHTML=hubProgramDefault[i];return}
     box.replaceChildren();
@@ -205,10 +221,22 @@ function renderPrograms(list){
       const a=document.createElement('a'),href=hubSafeUrl(p.url);
       a.className='link';
       if(href){a.href=href;a.target='_blank';a.rel='noopener noreferrer'}else{a.href='#';a.addEventListener('click',ev=>ev.preventDefault())}
-      const b=document.createElement('b'),s=document.createElement('small');
+      const b=document.createElement('b'),sm=document.createElement('small');
       b.textContent=(p.icon?p.icon+' ':'')+p.name;
-      s.textContent=p.description||(href?new URL(href).hostname:'ยังไม่ได้ใส่ URL');
-      a.append(b,s);box.append(a);
+      sm.textContent=p.description||(href?new URL(href).hostname:'ยังไม่ได้ใส่ URL');
+      a.append(b,sm);
+      if(i===0&&admin){
+        const wrap=document.createElement('div'),tools=document.createElement('div');
+        wrap.className='prog';tools.className='prog-tools';
+        [['edit','✏️','แก้ไข'],['delete','🗑️','ลบ']].forEach(([act,icon,label])=>{
+          const btn=document.createElement('button');
+          btn.type='button';btn.className='prog-act'+(act==='delete'?' danger':'');
+          btn.dataset.progAction=act;btn.dataset.id=p.programId;
+          btn.title=label+' '+p.name;btn.setAttribute('aria-label',label+' '+p.name);btn.textContent=icon;
+          tools.append(btn);
+        });
+        wrap.append(a,tools);box.append(wrap);
+      }else box.append(a);
     });
   });
 }
@@ -218,6 +246,52 @@ async function loadPrograms(){
   catch(err){hubToast(err.message||'โหลดรายการโปรแกรมไม่สำเร็จ','error')}
 }
 
+const HUB_ID_FIELD={Programs:'programId',Tasks:'taskId',Events:'eventId',Leave:'leaveId'};
+// เปิดฟอร์มเพิ่ม (existing ว่าง) หรือแก้ไข (ส่งรายการเดิมมา) คืน true เมื่อบันทึกสำเร็จ
+async function hubOpenForm(sheet,existing){
+  const cfg=HUB_FORMS[sheet];if(!cfg)return false;
+  const editing=!!existing;
+  const {value:record}=await Swal.fire({
+    title:editing?cfg.editTitle:cfg.title,html:hubFormHtml(cfg.fields,existing||{}),showCancelButton:true,
+    confirmButtonText:editing?'บันทึกการแก้ไข':'บันทึกรายการ',cancelButtonText:'ยกเลิก',focusConfirm:false,
+    preConfirm:()=>{
+      const f=document.getElementById('hubRecordForm');
+      f.classList.add('was-validated');
+      if(!f.checkValidity())return false;
+      const r={};
+      // ตอนแก้ไขส่งค่าว่างด้วย เพื่อให้ล้างช่องที่ลบข้อความออกได้
+      cfg.fields.forEach(x=>{const v=f.elements[x.name].value.trim();if(v||editing)r[x.name]=v});
+      return r;
+    }
+  });
+  if(!record)return false;
+  if(editing)record[HUB_ID_FIELD[sheet]]=existing[HUB_ID_FIELD[sheet]];
+  try{
+    await hubApi('save',{sheet,record});
+    hubToast(editing?'แก้ไขสำเร็จ':'บันทึกสำเร็จ');
+    return true;
+  }catch(err){hubToast(err.message,'error');return false}
+}
+
+// ปุ่มแก้ไข/ลบบนการ์ดโปรแกรม (แอดมิน; เซิร์ฟเวอร์ตรวจสิทธิ์ซ้ำทุกครั้ง)
+hubProgramBoxes[0].addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-prog-action]');
+  if(!btn||!currentUser||currentUser.role!=='admin')return;
+  const prog=hubProgramList.find(x=>x.programId===btn.dataset.id);
+  if(!prog)return;
+  if(btn.dataset.progAction==='edit'){
+    if(await hubOpenForm('Programs',prog))await loadPrograms();
+    return;
+  }
+  const r=await Swal.fire({icon:'warning',title:'ลบโปรแกรมนี้?',text:prog.name,showCancelButton:true,confirmButtonText:'ลบ',cancelButtonText:'ยกเลิก',confirmButtonColor:'#c14242'});
+  if(!r.isConfirmed)return;
+  try{
+    await hubApi('delete',{sheet:'Programs',id:prog.programId});
+    hubToast('ลบโปรแกรมแล้ว');
+    await loadPrograms();
+  }catch(err){hubToast(err.message||'ลบไม่สำเร็จ','error')}
+});
+
 document.addEventListener('click',async e=>{
   const p=e.target.closest('[data-protected="true"]');
   if(p&&!currentUser){e.preventDefault();e.stopImmediatePropagation();await loginDialog();return}
@@ -225,25 +299,8 @@ document.addEventListener('click',async e=>{
   if(!action)return;
   e.preventDefault();e.stopImmediatePropagation();
   if(!currentUser){await loginDialog();return}
-  const sheet=HUB_MODALS[action.dataset.modal],cfg=HUB_FORMS[sheet];
-  if(!cfg)return;
-  const {value:record}=await Swal.fire({
-    title:cfg.title,html:hubFormHtml(cfg.fields),showCancelButton:true,
-    confirmButtonText:'บันทึกรายการ',cancelButtonText:'ยกเลิก',focusConfirm:false,
-    preConfirm:()=>{
-      const f=document.getElementById('hubRecordForm');
-      f.classList.add('was-validated');
-      if(!f.checkValidity())return false;
-      const r={};
-      cfg.fields.forEach(x=>{const v=f.elements[x.name].value.trim();if(v)r[x.name]=v});
-      return r;
-    }
-  });
-  if(!record)return;
-  try{
-    await hubApi('save',{sheet,record});
-    hubToast('บันทึกสำเร็จ');
-    if(sheet==='Programs')await loadPrograms();
-  }catch(err){hubToast(err.message,'error')}
+  const sheet=HUB_MODALS[action.dataset.modal];
+  if(!HUB_FORMS[sheet])return;
+  if(await hubOpenForm(sheet)&&sheet==='Programs')await loadPrograms();
 },true);
 </script></body></html>
