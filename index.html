@@ -131,11 +131,11 @@ function hubApi(action,payload={}){
   });
 }
 function roleName(role){return ({admin:'แอดมิน',leader:'หัวหน้า',staff:'เจ้าหน้าที่'})[role]||role}
-function updateLoginUi(){document.getElementById('loginBtn').classList.toggle('d-none',!!currentUser);document.getElementById('logoutBtn').classList.toggle('d-none',!currentUser);const badge=document.getElementById('userBadge');badge.classList.toggle('d-none',!currentUser);if(currentUser)badge.textContent=currentUser.name+' · '+roleName(currentUser.role);document.querySelectorAll('[data-protected="true"]').forEach(x=>x.title=currentUser?'':'เข้าสู่ระบบก่อนเปิดเมนูนี้');document.querySelectorAll('[data-role="admin"]').forEach(x=>x.classList.toggle('d-none',!currentUser||currentUser.role!=='admin'));document.querySelectorAll('[data-modal]').forEach(x=>x.disabled=!currentUser)}
-async function loginDialog(){authBackdrop.classList.add('open');authBackdrop.setAttribute('aria-hidden','false');const form=document.getElementById('hubLoginForm');form.reset();form.classList.remove('was-validated');document.getElementById('hubLoginError').textContent='';setTimeout(()=>document.getElementById('hubUsername').focus(),100);const result=await new Promise(resolve=>loginResolver=resolve);if(result){currentUser=result;sessionStorage.setItem('pharmacyHubUser',JSON.stringify(currentUser));updateLoginUi();setUserAdminVisibility();if(currentUser.role==="admin")await refreshUsers();if(currentUser.mustChangePassword)await changePasswordDialog();hubToast('เข้าสู่ระบบสำเร็จ')}}
+function updateLoginUi(){document.getElementById('loginBtn').classList.toggle('d-none',!!currentUser);document.getElementById('logoutBtn').classList.toggle('d-none',!currentUser);const badge=document.getElementById('userBadge');badge.classList.toggle('d-none',!currentUser);if(currentUser)badge.textContent=currentUser.name+' · '+roleName(currentUser.role);document.querySelectorAll('[data-protected="true"]').forEach(x=>x.title=currentUser?'':'เข้าสู่ระบบก่อนเปิดเมนูนี้');document.querySelectorAll('[data-role="admin"]').forEach(x=>x.classList.toggle('d-none',!currentUser||currentUser.role!=='admin'));document.querySelectorAll('[data-modal]').forEach(x=>{const m=x.dataset.modal;x.disabled=!currentUser||(m==='โปรแกรม'&&currentUser.role!=='admin')||(m==='กิจกรรม'&&currentUser.role==='staff')})}
+async function loginDialog(){authBackdrop.classList.add('open');authBackdrop.setAttribute('aria-hidden','false');const form=document.getElementById('hubLoginForm');form.reset();form.classList.remove('was-validated');document.getElementById('hubLoginError').textContent='';setTimeout(()=>document.getElementById('hubUsername').focus(),100);const result=await new Promise(resolve=>loginResolver=resolve);if(result){currentUser=result;sessionStorage.setItem('pharmacyHubUser',JSON.stringify(currentUser));updateLoginUi();setUserAdminVisibility();if(currentUser.role==="admin")await refreshUsers();if(currentUser.mustChangePassword)await changePasswordDialog();loadPrograms();hubToast('เข้าสู่ระบบสำเร็จ')}}
 document.getElementById('hubLoginForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget;form.classList.add('was-validated');if(!form.checkValidity())return;const btn=document.getElementById('hubLoginSubmit'),error=document.getElementById('hubLoginError');btn.disabled=true;btn.textContent='กำลังเข้าสู่ระบบ…';error.textContent='';try{const user=await hubApi('login',{username:document.getElementById('hubUsername').value.trim(),password:document.getElementById('hubPassword').value});closeLoginModal(user)}catch(err){error.textContent=err.message||'เข้าสู่ระบบไม่สำเร็จ กรุณาลองอีกครั้ง'}finally{btn.disabled=false;btn.textContent='เข้าสู่ระบบ'}});
 async function changePasswordDialog(){const r=await Swal.fire({title:'ตั้งรหัสผ่านใหม่',html:'<form id="hubPasswordForm" class="needs-validation text-start" novalidate><label class="form-label">รหัสผ่านใหม่ (อย่างน้อย 10 ตัว)</label><input id="newHubPassword" class="form-control" type="password" minlength="10" required><div class="invalid-feedback">รหัสผ่านต้องมีอย่างน้อย 10 ตัว</div></form>',allowOutsideClick:false,allowEscapeKey:false,confirmButtonText:'บันทึกรหัสผ่าน',preConfirm:async()=>{const f=document.getElementById('hubPasswordForm');f.classList.add('was-validated');if(!f.checkValidity())return false;try{return await hubApi('changePassword',{password:document.getElementById('newHubPassword').value})}catch(e){Swal.showValidationMessage(e.message);return false}}});if(r.isConfirmed){currentUser.mustChangePassword=false;sessionStorage.setItem('pharmacyHubUser',JSON.stringify(currentUser));hubToast('เปลี่ยนรหัสผ่านแล้ว')}}
-async function logoutDialog(){const r=await Swal.fire({icon:'question',title:'ออกจากระบบ?',text:'คุณต้องการออกจากระบบหรือไม่',showCancelButton:true,confirmButtonText:'ออกจากระบบ',cancelButtonText:'อยู่ต่อ'});if(r.isConfirmed){try{await hubApi('logout')}catch{}currentUser=null;sessionStorage.removeItem('pharmacyHubUser');updateLoginUi();show('home');Swal.fire({icon:'success',title:'ออกจากระบบแล้ว',timer:1100,showConfirmButton:false})}}
+async function logoutDialog(){const r=await Swal.fire({icon:'question',title:'ออกจากระบบ?',text:'คุณต้องการออกจากระบบหรือไม่',showCancelButton:true,confirmButtonText:'ออกจากระบบ',cancelButtonText:'อยู่ต่อ'});if(r.isConfirmed){try{await hubApi('logout')}catch{}currentUser=null;sessionStorage.removeItem('pharmacyHubUser');updateLoginUi();renderPrograms(null);show('home');Swal.fire({icon:'success',title:'ออกจากระบบแล้ว',timer:1100,showConfirmButton:false})}}
 function setUserAdminVisibility(){const admin=!!currentUser&&currentUser.role==='admin';document.querySelector('[data-v=staff]').classList.toggle('d-none',!admin);document.getElementById('addUserBtn').classList.toggle('d-none',!admin);document.getElementById('userAdminNotice').classList.toggle('d-none',admin);document.getElementById('userTableWrap').classList.toggle('d-none',!admin)}
 function roleLabel(role){return ({admin:'แอดมิน',leader:'หัวหน้า',staff:'เจ้าหน้าที่'})[role]||role}
 async function refreshUsers(){if(!currentUser||currentUser.role!=='admin')return;setUserAdminVisibility();const body=document.getElementById('userTableBody');body.replaceChildren();try{const result=await hubApi('listUsers');for(const account of result.users||[]){const tr=document.createElement('tr');[account.fullName,account.username,roleLabel(account.role),account.isActive?'ใช้งาน':'ปิดใช้งาน'].forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.append(td)});const actions=document.createElement('td');actions.className='d-flex flex-wrap gap-1';[['edit','แก้ไข'],['reset','ตั้งรหัสผ่าน'],['toggle',account.isActive?'ปิดใช้':'เปิดใช้']].forEach(([action,label])=>{const b=document.createElement('button');b.type='button';b.className='btn white btn-sm';b.dataset.userAction=action;b.dataset.accountId=account.accountId;b.textContent=label;actions.append(b)});tr.append(actions);body.append(tr)}}catch(error){hubToast(error.message||'โหลดรายชื่อผู้ใช้ไม่สำเร็จ','error')}}
@@ -143,6 +143,93 @@ async function userFormDialog(account=null){const editing=!!account;const esc=v=
 async function resetUserPassword(accountId){const result=await Swal.fire({title:'ตั้งรหัสผ่านใหม่',html:'<form id="resetUserForm" class="needs-validation text-start" novalidate><label class="form-label">รหัสผ่านชั่วคราวใหม่ (อย่างน้อย 10 ตัว)</label><input name="password" type="password" class="form-control" minlength="10" autocomplete="new-password" required><div class="invalid-feedback">รหัสผ่านต้องมีอย่างน้อย 10 ตัว</div></form>',showCancelButton:true,confirmButtonText:'ยืนยันรีเซ็ต',cancelButtonText:'ยกเลิก',preConfirm:()=>{const form=document.getElementById('resetUserForm');form.classList.add('was-validated');if(!form.checkValidity())return false;return Object.fromEntries(new FormData(form).entries())}});if(!result.isConfirmed)return;try{await hubApi('resetUserPassword',{accountId,password:result.value.password});hubToast('ตั้งรหัสผ่านชั่วคราวแล้ว ผู้ใช้จะต้องเปลี่ยนเมื่อเข้าสู่ระบบ');await refreshUsers()}catch(error){hubToast(error.message||'รีเซ็ตรหัสผ่านไม่สำเร็จ','error')}}
 document.getElementById('addUserBtn').addEventListener('click',()=>userFormDialog());document.getElementById('userTableBody').addEventListener('click',async e=>{const button=e.target.closest('[data-user-action]');if(!button)return;try{const accountId=button.dataset.accountId,action=button.dataset.userAction,current=(await hubApi('listUsers')).users.find(x=>x.accountId===accountId);if(!current)return;if(action==='edit'){await userFormDialog(current);return}if(action==='reset'){await resetUserPassword(accountId);return}const confirm=await Swal.fire({icon:'warning',title:current.isActive?'ปิดใช้งานบัญชีนี้?':'เปิดใช้งานบัญชีนี้?',text:current.username,showCancelButton:true,confirmButtonText:current.isActive?'ปิดใช้งาน':'เปิดใช้งาน',cancelButtonText:'ยกเลิก'});if(!confirm.isConfirmed)return;await hubApi('setUserActive',{accountId,isActive:!current.isActive});hubToast(current.isActive?'ปิดใช้งานบัญชีแล้ว':'เปิดใช้งานบัญชีแล้ว');await refreshUsers()}catch(error){hubToast(error.message||'จัดการบัญชีไม่สำเร็จ','error')}});document.getElementById('loginBtn').addEventListener('click',loginDialog);document.getElementById('logoutBtn').addEventListener('click',logoutDialog);updateLoginUi();setUserAdminVisibility();
 // ตรวจ session ที่เก็บไว้ด้วย whoami (ใช้ได้แม้บัญชียังต้องเปลี่ยนรหัสผ่าน)
-async function validateRestoredSession(){if(!currentUser)return;try{const r=await hubApi('whoami');currentUser={...currentUser,...r.user};sessionStorage.setItem('pharmacyHubUser',JSON.stringify(currentUser));updateLoginUi();setUserAdminVisibility();if(currentUser.role==='admin')await refreshUsers();if(currentUser.mustChangePassword)await changePasswordDialog()}catch{currentUser=null;sessionStorage.removeItem('pharmacyHubUser');updateLoginUi();setUserAdminVisibility()}}if(currentUser)validateRestoredSession();
-document.addEventListener('click',async e=>{const p=e.target.closest('[data-protected="true"]');if(p&&!currentUser){e.preventDefault();e.stopImmediatePropagation();await loginDialog();return}const action=e.target.closest('[data-modal]');if(action){e.preventDefault();e.stopImmediatePropagation();if(!currentUser){await loginDialog();return}const title=action.dataset.modal;const {value:record}=await Swal.fire({title:title,html:'<form id="hubRecordForm" class="needs-validation text-start" novalidate><label class="form-label">หัวข้อ</label><input id="hubTitle" class="form-control mb-2" required maxlength="160"><div class="invalid-feedback mb-2">กรุณากรอกหัวข้อ</div><label class="form-label">รายละเอียด</label><textarea id="hubDesc" class="form-control mb-2" rows="3" required></textarea><div class="invalid-feedback mb-2">กรุณากรอกรายละเอียด</div><label class="form-label">กำหนดวันที่</label><input id="hubDate" class="form-control" type="date" required><div class="invalid-feedback">กรุณาเลือกวันที่</div></form>',showCancelButton:true,confirmButtonText:'บันทึกรายการ',cancelButtonText:'ยกเลิก',focusConfirm:false,preConfirm:()=>{const f=document.getElementById('hubRecordForm');f.classList.add('was-validated');if(!f.checkValidity())return false;return {title:document.getElementById('hubTitle').value.trim(),description:document.getElementById('hubDesc').value.trim(),date:document.getElementById('hubDate').value}}});if(!record){await Swal.fire({icon:'info',title:'ยกเลิกรายการแล้ว',timer:1000,showConfirmButton:false});return}try{const sheet=title.includes('งาน')?'Tasks':title.includes('กิจกรรม')?'Events':title.includes('ลา')?'Leave':'Programs';await hubApi('save',{sheet,record});hubToast('บันทึก'+title+'สำเร็จ')}catch(err){hubToast(err.message,'error')}}},true);
+async function validateRestoredSession(){if(!currentUser)return;try{const r=await hubApi('whoami');currentUser={...currentUser,...r.user};sessionStorage.setItem('pharmacyHubUser',JSON.stringify(currentUser));updateLoginUi();setUserAdminVisibility();if(currentUser.role==='admin')await refreshUsers();if(currentUser.mustChangePassword)await changePasswordDialog();loadPrograms()}catch{currentUser=null;sessionStorage.removeItem('pharmacyHubUser');updateLoginUi();setUserAdminVisibility()}}if(currentUser)validateRestoredSession();
+// ===== ฟอร์มเพิ่มรายการ (ฟิลด์ตรงกับหัวคอลัมน์ในชีต) =====
+const HUB_FORMS={
+  Programs:{title:'เพิ่มโปรแกรม',fields:[
+    {name:'name',label:'หัวข้อ (ชื่อโปรแกรม)',max:120,required:true},
+    {name:'url',label:'URL',type:'url',max:500,required:true,placeholder:'https://',pattern:'https?://\\S+',invalid:'กรุณากรอก URL ที่ขึ้นต้นด้วย http:// หรือ https://'},
+    {name:'description',label:'รายละเอียด (ไม่บังคับ)',type:'textarea',max:1000}]},
+  Tasks:{title:'เพิ่มงาน',fields:[
+    {name:'title',label:'ชื่องาน',max:160,required:true},
+    {name:'description',label:'รายละเอียด',type:'textarea',max:2000},
+    {name:'dueDate',label:'กำหนดส่ง',type:'date'}]},
+  Events:{title:'เพิ่มกิจกรรม',fields:[
+    {name:'title',label:'ชื่อกิจกรรม',max:160,required:true},
+    {name:'startDate',label:'วันที่เริ่ม',type:'date',required:true},
+    {name:'endDate',label:'วันที่สิ้นสุด',type:'date'},
+    {name:'location',label:'สถานที่',max:160},
+    {name:'description',label:'รายละเอียด',type:'textarea',max:2000}]},
+  Leave:{title:'บันทึกการลา',fields:[
+    {name:'leaveType',label:'ประเภทการลา',max:60,required:true,placeholder:'เช่น ลาพักผ่อน, ลาป่วย'},
+    {name:'startDate',label:'วันที่เริ่มลา',type:'date',required:true},
+    {name:'endDate',label:'วันที่สิ้นสุดการลา',type:'date',required:true},
+    {name:'reason',label:'เหตุผล',type:'textarea',max:1000}]}
+};
+const HUB_MODALS={'โปรแกรม':'Programs','งานใหม่':'Tasks','งาน':'Tasks','กิจกรรม':'Events','การลา':'Leave'};
+function hubFormHtml(fields){
+  return '<form id="hubRecordForm" class="needs-validation text-start" novalidate>'+fields.map(f=>{
+    const id='hubf_'+f.name,req=f.required?' required':'',max=f.max?' maxlength="'+f.max+'"':'';
+    const input=f.type==='textarea'
+      ?'<textarea id="'+id+'" name="'+f.name+'" class="form-control mb-2" rows="3"'+max+req+'></textarea>'
+      :'<input id="'+id+'" name="'+f.name+'" class="form-control mb-2" type="'+(f.type||'text')+'"'+max+req+(f.pattern?' pattern="'+f.pattern+'"':'')+(f.placeholder?' placeholder="'+f.placeholder+'"':'')+'>';
+    return '<label class="form-label" for="'+id+'">'+f.label+(f.required?' <span class="text-danger">*</span>':'')+'</label>'+input+'<div class="invalid-feedback mb-2">'+(f.invalid||'กรุณากรอก'+f.label)+'</div>';
+  }).join('')+'</form>';
+}
+
+// ===== แสดงรายการโปรแกรมจากชีต (ออกจากระบบแล้วกลับเป็นข้อมูลตัวอย่าง) =====
+const hubProgramBoxes=[document.querySelector('#programs .quick'),document.querySelector('#home .quick')];
+const hubProgramDefault=hubProgramBoxes.map(b=>b.innerHTML);
+function hubSafeUrl(u){try{const x=new URL(String(u));return x.protocol==='https:'||x.protocol==='http:'?x.href:''}catch{return ''}}
+function renderPrograms(list){
+  hubProgramBoxes.forEach((box,i)=>{
+    if(!list){box.innerHTML=hubProgramDefault[i];return}
+    box.replaceChildren();
+    const items=list.slice().sort((a,b)=>(Number(a.sortOrder)||0)-(Number(b.sortOrder)||0)||String(a.name).localeCompare(String(b.name),'th'));
+    if(!items.length){const d=document.createElement('div');d.className='muted';d.textContent='ยังไม่มีโปรแกรม กด “เพิ่มโปรแกรม” เพื่อเพิ่มรายการแรก';box.append(d);return}
+    (i===1?items.slice(0,6):items).forEach(p=>{
+      const a=document.createElement('a'),href=hubSafeUrl(p.url);
+      a.className='link';
+      if(href){a.href=href;a.target='_blank';a.rel='noopener noreferrer'}else{a.href='#';a.addEventListener('click',ev=>ev.preventDefault())}
+      const b=document.createElement('b'),s=document.createElement('small');
+      b.textContent=(p.icon?p.icon+' ':'')+p.name;
+      s.textContent=p.description||(href?new URL(href).hostname:'ยังไม่ได้ใส่ URL');
+      a.append(b,s);box.append(a);
+    });
+  });
+}
+async function loadPrograms(){
+  if(!currentUser||currentUser.mustChangePassword)return;
+  try{const r=await hubApi('bootstrap');renderPrograms(r.data?.Programs||[])}
+  catch(err){hubToast(err.message||'โหลดรายการโปรแกรมไม่สำเร็จ','error')}
+}
+
+document.addEventListener('click',async e=>{
+  const p=e.target.closest('[data-protected="true"]');
+  if(p&&!currentUser){e.preventDefault();e.stopImmediatePropagation();await loginDialog();return}
+  const action=e.target.closest('[data-modal]');
+  if(!action)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(!currentUser){await loginDialog();return}
+  const sheet=HUB_MODALS[action.dataset.modal],cfg=HUB_FORMS[sheet];
+  if(!cfg)return;
+  const {value:record}=await Swal.fire({
+    title:cfg.title,html:hubFormHtml(cfg.fields),showCancelButton:true,
+    confirmButtonText:'บันทึกรายการ',cancelButtonText:'ยกเลิก',focusConfirm:false,
+    preConfirm:()=>{
+      const f=document.getElementById('hubRecordForm');
+      f.classList.add('was-validated');
+      if(!f.checkValidity())return false;
+      const r={};
+      cfg.fields.forEach(x=>{const v=f.elements[x.name].value.trim();if(v)r[x.name]=v});
+      return r;
+    }
+  });
+  if(!record)return;
+  try{
+    await hubApi('save',{sheet,record});
+    hubToast('บันทึกสำเร็จ');
+    if(sheet==='Programs')await loadPrograms();
+  }catch(err){hubToast(err.message,'error')}
+},true);
 </script></body></html>
