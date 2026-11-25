@@ -34,7 +34,7 @@
         .top{height:74px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);margin-bottom:24px}.top b{font-size:19px}
         .pill,.search{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:12px;padding:9px 13px;font-size:11px}.search::placeholder{color:var(--muted)}
         .hero{background:linear-gradient(110deg,var(--hero-a),var(--hero-b));border-radius:22px;padding:26px 30px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:16px;box-shadow:0 10px 28px var(--shadow)}.hero h1{margin:10px 0 4px;font-size:24px}.hero p{color:var(--hero-text);font-size:12px}
-        .btn{border:0;border-radius:11px;padding:10px 13px;cursor:pointer;font-weight:600}.green{background:var(--brand);color:white}.white{background:var(--surface);color:var(--text);border:1px solid var(--btn-border)}
+        .btn{border:0;border-radius:11px;padding:8px 13px;cursor:pointer;font-weight:600}.green{background:var(--brand);color:white}.white{background:var(--surface);color:var(--text);border:1px solid var(--btn-border)}
         #themeBtn{min-width:42px;line-height:1;padding:9px 11px}
         .sect{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px}.sect h2{font-size:14px;margin:0}.muted,small{color:var(--muted);font-size:10px}
         .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -111,8 +111,30 @@
   </head>
   <body>
     <aside class="side" id="side">
-      <div class="brand"><i>✚</i>Pharmacy Room Hub<small>ระบบบริหารห้องยา</small></div>
-      <nav class="nav"><button class="on" data-v="home">◫　ภาพรวม</button><button data-v="programs">▦　โปรแกรมที่ใช้</button><button data-v="documents">▤　คลังเอกสาร</button><button data-v="tasks">☑　มอบหมายงาน</button><button data-v="calendar">▦　ปฏิทินกิจกรรมและการลา</button><button data-v="reports">◔　รายงาน</button><button data-v="staff">♙　เจ้าหน้าที่</button></nav></aside><main class="main"><header class="top"><div><button class="mobile" id="menu">☰</button> <b id="title">ภาพรวมระบบ</b><div class="muted">พื้นที่ทำงานกลางของทีมเภสัชกรรม</div></div><div><input class="search" placeholder="ค้นหางานหรือโปรแกรม"> <span class="pill" id="date"></span> <button class="btn white" id="themeBtn" type="button"></button></div></header>
+      <div class="brand"><i>✚</i>Pharmacy Hub<small>ระบบบริหารห้องยา</small></div>
+      <nav class="nav">
+        <button class="on" data-v="home">◫　ภาพรวม</button>
+        <button data-v="programs">▦　โปรแกรมที่ใช้</button>
+        <button data-v="documents">▤　คลังเอกสาร</button>
+        <button data-v="tasks">☑　มอบหมายงาน</button>
+        <button data-v="calendar">▦　ปฏิทินกิจกรรมและการลา</button>
+        <button data-v="reports">◔　รายงาน</button>
+        <button data-v="staff">♙　เจ้าหน้าที่</button>
+      </nav>
+    </aside>
+    <main class="main">
+      <header class="top">
+        <div>
+          <button class="mobile" id="menu">☰</button>
+          <b id="title">ภาพรวมระบบ</b>
+          <div class="muted">พื้นที่ทำงานกลางของทีมเภสัชกรรม</div>
+        </div>
+        <div>
+          <input class="search" placeholder="ค้นหางานหรือโปรแกรม">
+          <span class="pill" id="date"></span> 
+          <button class="btn white" id="themeBtn" type="button"></button>
+        </div>
+      </header>
         <!-- <div class="hero">
           <div>
             <span class="pill">✦ พื้นที่ทำงานกลางของทีม</span>
@@ -124,7 +146,66 @@
             <button class="btn white" data-v="calendar">ดูปฏิทิน</button>
           </div>
         </div> -->
-        <section class="view on" id="home"><div class="sect"><h2>ภาพรวมการทำงาน</h2><span class="muted" id="homeNote"></span></div><div class="stats"><div class="stat">งานทั้งหมด<strong id="stTasks">–</strong><small>งานที่คุณมองเห็นได้</small></div><div class="stat">กำลังดำเนินการ<strong id="stDoing">–</strong><small>งานที่ต้องติดตาม</small></div><div class="stat">กิจกรรมเดือนนี้<strong id="stEvents">–</strong><small>ประชุมและอบรม</small></div><div class="stat">ใบลารอพิจารณา<strong id="stLeave">–</strong><small>รายการที่ยังไม่อนุมัติ</small></div></div><div class="grid"><article class="card"><h3>สถานะงาน</h3><p class="muted">จำนวนงานแยกตามสถานะ</p><div id="statusBars"></div></article><article class="card"><h3>งานที่ต้องติดตาม</h3><p class="muted">เรียงตามกำหนดส่ง</p><div class="rows" id="homeTasks"></div></article></div><div class="grid"><article class="card"><h3>กิจกรรมที่กำลังจะมาถึง</h3><div id="homeEvents"></div></article><article class="card"><h3>โปรแกรมที่ใช้บ่อย</h3><p class="muted">กดเพื่อเปิดระบบ</p><div class="quick"></div></article></div></section><section class="view" id="programs"><div class="page"><div class="sect"><h2>โปรแกรมที่ใช้</h2><button class="btn green" data-modal="โปรแกรม">＋ เพิ่มโปรแกรม</button></div><div class="quick"></div></div></section><section class="view" id="documents"><div class="page"><div class="sect"><h2>คลังเอกสาร</h2><button class="btn green" data-modal="เอกสาร">＋ เพิ่มเอกสาร</button></div><div class="doc-filter"><input class="form-control form-control-sm" id="docSearch" type="search" placeholder="ค้นหาเอกสาร" aria-label="ค้นหาเอกสาร"><select class="form-select form-select-sm" id="docCat" aria-label="กรองตามหมวดหมู่"><option value="">ทุกหมวดหมู่</option></select></div><div class="quick" id="docsGrid"></div></div></section><section class="view" id="tasks"><div class="page"><div class="sect"><h2>มอบหมายงาน</h2><button class="btn green" data-modal="งาน">＋ เพิ่มงาน</button></div><table class="table"><thead><tr><th>ชื่องาน</th><th>ผู้รับผิดชอบ</th><th>กำหนดส่ง</th><th>สถานะ</th></tr></thead><tbody id="tasksBody"></tbody></table></div></section><section class="view" id="calendar"><div class="page"><div class="sect"><h2 id="calTitle">ปฏิทิน</h2><div class="d-flex flex-wrap gap-2 justify-content-end"><button class="btn white" id="calPrev" type="button" aria-label="เดือนก่อนหน้า">‹</button><button class="btn white" id="calToday" type="button">วันนี้</button><button class="btn white" id="calNext" type="button" aria-label="เดือนถัดไป">›</button><button class="btn green" data-modal="กิจกรรม">＋ เพิ่มกิจกรรม</button><button class="btn green" data-modal="การลา">＋ บันทึกการลา</button></div></div><div class="cal-legend"><span class="lg lg-event">กิจกรรม</span><span class="lg lg-leave">การลา</span><span class="muted">กดที่วันเพื่อดูรายละเอียด</span></div><div class="cal" id="cal"></div><p class="muted mt-2 mb-0" id="calNote"></p><h3 class="cal-sub">กิจกรรมในเดือนนี้</h3><div class="rows" id="calEventList"></div><h3 class="cal-sub">รายการลาในเดือนนี้</h3><table class="table"><thead><tr><th>เจ้าหน้าที่</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th></tr></thead><tbody id="leaveBody"></tbody></table></div></section><section class="view" id="reports"><div class="page"><div class="sect"><h2>รายงานจากไฟล์ Excel</h2></div><p class="muted">เลือกไฟล์ Excel (.xlsx, .xls) หรือ .csv ระบบจะอ่านไฟล์และสร้างกราฟสรุปบนเครื่องของคุณ ไฟล์ไม่ถูกอัปโหลดหรือบันทึกไว้ที่ใด</p><label class="drop" id="rptDrop" for="rptFile"><span>📄 ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</span><small>รองรับ .xlsx .xls .csv ขนาดไม่เกิน 15 MB</small><input type="file" id="rptFile" accept=".xlsx,.xls,.csv" hidden></label><div id="rptWork" class="d-none"><div class="rpt-meta"><b id="rptFileName"></b> · <span id="rptInfo"></span></div><div class="rpt-controls"><div><label for="rptSheet">ชีต</label><select id="rptSheet" class="form-select form-select-sm"></select></div><div><label for="rptCat">แกนหมวดหมู่ (X)</label><select id="rptCat" class="form-select form-select-sm"></select></div><div><label for="rptAgg">วิธีรวมค่า</label><select id="rptAgg" class="form-select form-select-sm"><option value="sum">ผลรวม</option><option value="avg">ค่าเฉลี่ย</option><option value="count">จำนวนรายการ</option></select></div><div><label for="rptType">ชนิดกราฟ</label><select id="rptType" class="form-select form-select-sm"><option value="bar">แท่ง</option><option value="line">เส้น</option><option value="pie">วงกลม</option></select></div><div><label for="rptSort">เรียงลำดับ</label><select id="rptSort" class="form-select form-select-sm"><option value="file">ตามลำดับในไฟล์</option><option value="desc">มากไปน้อย</option></select></div></div><div class="rpt-vals"><label>ค่าที่ต้องการสรุป (Y) เลือกได้หลายคอลัมน์</label><div id="rptVals" class="rpt-checks"></div></div><div class="stats" id="rptKpi"></div><p class="muted" id="rptMsg"></p><div class="rpt-chart"><canvas id="rptChart"></canvas></div><button class="btn white" id="rptPng" type="button">⬇ บันทึกกราฟเป็นรูปภาพ</button><h3 class="cal-sub">ตัวอย่างข้อมูล (8 แถวแรก)</h3><div class="table-wrap"><table class="table" id="rptPreview"></table></div></div></div></section><section class="view" id="staff"><div class="page"><div class="sect"><h2>จัดการผู้ใช้งาน</h2><button class="btn green d-none" id="addUserBtn" type="button">＋ เพิ่มผู้ใช้</button></div><div id="userAdminNotice" class="notice">เมนูนี้สำหรับแอดมิน</div><div id="userTableWrap" class="table-responsive d-none"><table class="table align-middle"><thead><tr><th>ชื่อ</th><th>Username</th><th>สิทธิ์</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="userTableBody"></tbody></table></div></div></section></main><script>
+        <section class="view on" id="home">
+          <div class="sect">
+            <h2>ภาพรวมการทำงาน</h2>
+            <span class="muted" id="homeNote"></span>
+          </div>
+          <div class="stats">
+            <div class="stat">งานทั้งหมด<strong id="stTasks">–</strong><small>งานที่คุณมองเห็นได้</small></div>
+            <div class="stat">กำลังดำเนินการ<strong id="stDoing">–</strong><small>งานที่ต้องติดตาม</small></div>
+            <div class="stat">กิจกรรมเดือนนี้<strong id="stEvents">–</strong><small>ประชุมและอบรม</small></div>
+            <div class="stat">ใบลารอพิจารณา<strong id="stLeave">–</strong><small>รายการที่ยังไม่อนุมัติ</small></div>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <h3>สถานะงาน</h3>
+              <p class="muted">จำนวนงานแยกตามสถานะ</p>
+              <div id="statusBars"></div>
+            </article>
+            <article class="card">
+              <h3>งานที่ต้องติดตาม</h3>
+              <p class="muted">เรียงตามกำหนดส่ง</p>
+              <div class="rows" id="homeTasks"></div>
+            </article>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <h3>กิจกรรมที่กำลังจะมาถึง</h3>
+              <div id="homeEvents"></div>
+            </article>
+            <article class="card">
+              <h3>โปรแกรมที่ใช้บ่อย</h3>
+              <p class="muted">กดเพื่อเปิดระบบ</p>
+              <div class="quick"></div>
+            </article>
+          </div>
+        </section>
+      <section class="view" id="programs">
+        <div class="page">
+          <div class="sect">
+            <h2>โปรแกรมที่ใช้</h2>
+            <button class="btn green" data-modal="โปรแกรม">＋ เพิ่มโปรแกรม</button>
+          </div>
+          <div class="quick"></div>
+        </div>
+      </section>
+      <section class="view" id="documents">
+        <div class="page">
+          <div class="sect">
+            <h2>คลังเอกสาร</h2>
+            <button class="btn green" data-modal="เอกสาร">＋ เพิ่มเอกสาร</button>
+          </div>
+          <div class="doc-filter">
+            <input class="form-control form-control-sm" id="docSearch" type="search" placeholder="ค้นหาเอกสาร" aria-label="ค้นหาเอกสาร">
+            <select class="form-select form-select-sm" id="docCat" aria-label="กรองตามหมวดหมู่">
+              <option value="">ทุกหมวดหมู่</option>
+            </select>
+          </div>
+          <div class="quick" id="docsGrid"></div>
+        </div>
+      </section>
+      <section class="view" id="tasks"><div class="page"><div class="sect"><h2>มอบหมายงาน</h2><button class="btn green" data-modal="งาน">＋ เพิ่มงาน</button></div><table class="table"><thead><tr><th>ชื่องาน</th><th>ผู้รับผิดชอบ</th><th>กำหนดส่ง</th><th>สถานะ</th></tr></thead><tbody id="tasksBody"></tbody></table></div></section><section class="view" id="calendar"><div class="page"><div class="sect"><h2 id="calTitle">ปฏิทิน</h2><div class="d-flex flex-wrap gap-2 justify-content-end"><button class="btn white" id="calPrev" type="button" aria-label="เดือนก่อนหน้า">‹</button><button class="btn white" id="calToday" type="button">วันนี้</button><button class="btn white" id="calNext" type="button" aria-label="เดือนถัดไป">›</button><button class="btn green" data-modal="กิจกรรม">＋ เพิ่มกิจกรรม</button><button class="btn green" data-modal="การลา">＋ บันทึกการลา</button></div></div><div class="cal-legend"><span class="lg lg-event">กิจกรรม</span><span class="lg lg-leave">การลา</span><span class="muted">กดที่วันเพื่อดูรายละเอียด</span></div><div class="cal" id="cal"></div><p class="muted mt-2 mb-0" id="calNote"></p><h3 class="cal-sub">กิจกรรมในเดือนนี้</h3><div class="rows" id="calEventList"></div><h3 class="cal-sub">รายการลาในเดือนนี้</h3><table class="table"><thead><tr><th>เจ้าหน้าที่</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th></tr></thead><tbody id="leaveBody"></tbody></table></div></section><section class="view" id="reports"><div class="page"><div class="sect"><h2>รายงานจากไฟล์ Excel</h2></div><p class="muted">เลือกไฟล์ Excel (.xlsx, .xls) หรือ .csv ระบบจะอ่านไฟล์และสร้างกราฟสรุปบนเครื่องของคุณ ไฟล์ไม่ถูกอัปโหลดหรือบันทึกไว้ที่ใด</p><label class="drop" id="rptDrop" for="rptFile"><span>📄 ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</span><small>รองรับ .xlsx .xls .csv ขนาดไม่เกิน 15 MB</small><input type="file" id="rptFile" accept=".xlsx,.xls,.csv" hidden></label><div id="rptWork" class="d-none"><div class="rpt-meta"><b id="rptFileName"></b> · <span id="rptInfo"></span></div><div class="rpt-controls"><div><label for="rptSheet">ชีต</label><select id="rptSheet" class="form-select form-select-sm"></select></div><div><label for="rptCat">แกนหมวดหมู่ (X)</label><select id="rptCat" class="form-select form-select-sm"></select></div><div><label for="rptAgg">วิธีรวมค่า</label><select id="rptAgg" class="form-select form-select-sm"><option value="sum">ผลรวม</option><option value="avg">ค่าเฉลี่ย</option><option value="count">จำนวนรายการ</option></select></div><div><label for="rptType">ชนิดกราฟ</label><select id="rptType" class="form-select form-select-sm"><option value="bar">แท่ง</option><option value="line">เส้น</option><option value="pie">วงกลม</option></select></div><div><label for="rptSort">เรียงลำดับ</label><select id="rptSort" class="form-select form-select-sm"><option value="file">ตามลำดับในไฟล์</option><option value="desc">มากไปน้อย</option></select></div></div><div class="rpt-vals"><label>ค่าที่ต้องการสรุป (Y) เลือกได้หลายคอลัมน์</label><div id="rptVals" class="rpt-checks"></div></div><div class="stats" id="rptKpi"></div><p class="muted" id="rptMsg"></p><div class="rpt-chart"><canvas id="rptChart"></canvas></div><button class="btn white" id="rptPng" type="button">⬇ บันทึกกราฟเป็นรูปภาพ</button><h3 class="cal-sub">ตัวอย่างข้อมูล (8 แถวแรก)</h3><div class="table-wrap"><table class="table" id="rptPreview"></table></div></div></div></section><section class="view" id="staff"><div class="page"><div class="sect"><h2>จัดการผู้ใช้งาน</h2><button class="btn green d-none" id="addUserBtn" type="button">＋ เพิ่มผู้ใช้</button></div><div id="userAdminNotice" class="notice">เมนูนี้สำหรับแอดมิน</div><div id="userTableWrap" class="table-responsive d-none"><table class="table align-middle"><thead><tr><th>ชื่อ</th><th>Username</th><th>สิทธิ์</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="userTableBody"></tbody></table></div></div></section></main><script>
 // ===== สลับธีม มืด/สว่าง =====
 (function(){
   const KEY='pharmacyHubTheme',root=document.documentElement,btn=document.getElementById('themeBtn');
