@@ -18,7 +18,6 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
     <style>
         /* ===== ตัวแปรสี: ตัวอักษรเข้ม คอนทราสต์สูง (สลับธีมด้วย data-bs-theme บน <html>) ===== */
         :root {
@@ -1202,14 +1201,14 @@
           </div>
         </div>
         <div class="top-actions">
+          <button class="icon-btn" id="themeBtn" type="button"></button>
           <span class="pill" id="date"></span>
           <span class="pill d-none" id="userBadge"></span>
           <button class="btn green btn-sm" id="loginBtn" type="button">เข้าสู่ระบบ</button>
-          <button class="icon-btn" id="themeBtn" type="button"></button>
-          <button class="btn white btn-sm d-none me-1" id="logoutBtn" type="button"><i class="bi bi-box-arrow-right" style="font-size:16px;"></i></button>
+          <button class="btn white btn-sm d-none" id="logoutBtn" type="button">ออกจากระบบ</button>
         </div>
       </header>
-      <section class="view on" id="home"><div class="sect"><h2>ภาพรวมการทำงาน</h2><span class="muted" id="homeNote"></span></div><div class="stats"><div class="stat">งานทั้งหมด<strong id="stTasks">–</strong><small>งานที่คุณมองเห็นได้</small></div><div class="stat">กำลังดำเนินการ<strong id="stDoing">–</strong><small>งานที่ต้องติดตาม</small></div><div class="stat">กิจกรรมเดือนนี้<strong id="stEvents">–</strong><small>ประชุมและอบรม</small></div><div class="stat">ใบลารอพิจารณา<strong id="stLeave">–</strong><small>รายการที่ยังไม่อนุมัติ</small></div></div><div class="grid"><article class="card"><h3>สถานะงาน</h3><p class="muted">จำนวนงานแยกตามสถานะ</p><div id="statusBars"></div></article><article class="card"><h3>งานที่ต้องติดตาม</h3><p class="muted">เรียงตามกำหนดส่ง</p><div class="rows" id="homeTasks"></div></article></div><div class="grid"><article class="card"><h3>กิจกรรมที่กำลังจะมาถึง</h3><div id="homeEvents"></div></article><article class="card"><h3>โปรแกรมที่ใช้บ่อย</h3><p class="muted">กดเพื่อเปิดระบบ</p><div class="quick"></div></article></div></section><section class="view" id="programs"><div class="page"><div class="sect"><h2>โปรแกรมที่ใช้</h2><button class="btn green" data-modal="โปรแกรม">＋ เพิ่มโปรแกรม</button></div><div class="quick"></div></div></section><section class="view" id="documents"><div class="page"><div class="sect"><h2>คลังเอกสาร</h2><button class="btn green" data-modal="เอกสาร">＋ เพิ่มเอกสาร</button></div><div class="doc-filter"><input class="form-control form-control-sm" id="docSearch" type="search" placeholder="ค้นหาเอกสาร" aria-label="ค้นหาเอกสาร"><select class="form-select form-select-sm" id="docCat" aria-label="กรองตามหมวดหมู่"><option value="">ทุกหมวดหมู่</option></select></div><div class="quick" id="docsGrid"></div></div></section><section class="view" id="tasks"><div class="page"><div class="sect"><h2>มอบหมายงาน</h2><button class="btn green" data-modal="งาน">＋ เพิ่มงาน</button></div><table class="table rtable"><thead><tr><th>ชื่องาน</th><th>ผู้รับผิดชอบ</th><th>กำหนดส่ง</th><th>สถานะ</th></tr></thead><tbody id="tasksBody"></tbody></table></div></section><section class="view" id="calendar"><div class="page"><div class="sect"><h2 id="calTitle">ปฏิทิน</h2><div class="cal-tools"><div class="seg" role="group" aria-label="มุมมองปฏิทิน"><button type="button" data-cal-view="day">วัน</button><button type="button" data-cal-view="week">สัปดาห์</button><button type="button" data-cal-view="month" class="on">เดือน</button></div><div class="cal-nav"><button class="btn white" id="calPrev" type="button" aria-label="ก่อนหน้า">‹</button><button class="btn white" id="calToday" type="button">วันนี้</button><button class="btn white" id="calNext" type="button" aria-label="ถัดไป">›</button></div><div class="cal-add"><button class="btn green" data-modal="กิจกรรม">＋ เพิ่มกิจกรรม</button><button class="btn green" data-modal="การลา">＋ บันทึกการลา</button></div></div></div><div class="cal-legend"><span class="lg lg-event">กิจกรรม</span><span class="lg lg-leave">การลา</span><span class="lg lg-gcal d-none" id="lgGcal">Google Calendar</span><span class="muted">กดที่รายการเพื่อดูรายละเอียด</span></div><div id="calView"></div><p class="muted mt-2 mb-0" id="calNote"></p><h3 class="cal-sub" id="calListTitle">กิจกรรมและนัดหมาย</h3><div class="rows" id="calEventList"></div><h3 class="cal-sub" id="calLeaveTitle">รายการลา</h3><table class="table rtable"><thead><tr><th>เจ้าหน้าที่</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th></tr></thead><tbody id="leaveBody"></tbody></table></div></section><section class="view" id="reports"><div class="page"><div class="sect"><h2>รายงานจากไฟล์ Excel</h2></div><p class="muted">เลือกไฟล์ Excel (.xlsx, .xls) หรือ .csv ระบบจะอ่านไฟล์และสร้างกราฟสรุปบนเครื่องของคุณ ไฟล์ไม่ถูกอัปโหลดหรือบันทึกไว้ที่ใด</p><label class="drop" id="rptDrop" for="rptFile"><span>📄 ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</span><small>รองรับ .xlsx .xls .csv ขนาดไม่เกิน 15 MB</small><input type="file" id="rptFile" accept=".xlsx,.xls,.csv" hidden></label><div id="rptWork" class="d-none"><div class="rpt-meta"><b id="rptFileName"></b> · <span id="rptInfo"></span></div><div class="rpt-controls"><div><label for="rptSheet">ชีต</label><select id="rptSheet" class="form-select form-select-sm"></select></div><div><label for="rptCat">แกนหมวดหมู่ (X)</label><select id="rptCat" class="form-select form-select-sm"></select></div><div><label for="rptAgg">วิธีรวมค่า</label><select id="rptAgg" class="form-select form-select-sm"><option value="sum">ผลรวม</option><option value="avg">ค่าเฉลี่ย</option><option value="count">จำนวนรายการ</option></select></div><div><label for="rptType">ชนิดกราฟ</label><select id="rptType" class="form-select form-select-sm"><option value="bar">แท่ง</option><option value="line">เส้น</option><option value="pie">วงกลม</option></select></div><div><label for="rptSort">เรียงลำดับ</label><select id="rptSort" class="form-select form-select-sm"><option value="file">ตามลำดับในไฟล์</option><option value="desc">มากไปน้อย</option></select></div></div><div class="rpt-vals"><label>ค่าที่ต้องการสรุป (Y) เลือกได้หลายคอลัมน์</label><div id="rptVals" class="rpt-checks"></div></div><div class="stats" id="rptKpi"></div><p class="muted" id="rptMsg"></p><div class="rpt-chart"><canvas id="rptChart"></canvas></div><button class="btn white" id="rptPng" type="button">⬇ บันทึกกราฟเป็นรูปภาพ</button><h3 class="cal-sub">ตัวอย่างข้อมูล (8 แถวแรก)</h3><div class="table-wrap"><table class="table" id="rptPreview"></table></div></div></div></section><section class="view" id="staff"><div class="page"><div class="sect"><h2>จัดการผู้ใช้งาน</h2><button class="btn green d-none" id="addUserBtn" type="button">＋ เพิ่มผู้ใช้</button></div><div id="userAdminNotice" class="notice">เมนูนี้สำหรับแอดมิน</div><div id="userTableWrap" class="table-responsive d-none"><table class="table align-middle rtable"><thead><tr><th>ชื่อ</th><th>Username</th><th>สิทธิ์</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="userTableBody"></tbody></table></div></div></section></main>
+      <section class="view on" id="home"><div class="sect"><h2>ภาพรวมการทำงาน</h2><span class="muted" id="homeNote"></span></div><div class="notice d-none" id="homeError" role="alert"></div><div class="stats"><div class="stat">งานทั้งหมด<strong id="stTasks">–</strong><small>งานที่คุณมองเห็นได้</small></div><div class="stat">กำลังดำเนินการ<strong id="stDoing">–</strong><small>งานที่ต้องติดตาม</small></div><div class="stat">กิจกรรมเดือนนี้<strong id="stEvents">–</strong><small>ประชุมและอบรม</small></div><div class="stat">ใบลารอพิจารณา<strong id="stLeave">–</strong><small>รายการที่ยังไม่อนุมัติ</small></div></div><div class="grid"><article class="card"><h3>สถานะงาน</h3><p class="muted">จำนวนงานแยกตามสถานะ</p><div id="statusBars"></div></article><article class="card"><h3>งานที่ต้องติดตาม</h3><p class="muted">เรียงตามกำหนดส่ง</p><div class="rows" id="homeTasks"></div></article></div><div class="grid"><article class="card"><h3>กิจกรรมที่กำลังจะมาถึง</h3><div id="homeEvents"></div></article><article class="card"><h3>โปรแกรมที่ใช้บ่อย</h3><p class="muted">กดเพื่อเปิดระบบ</p><div class="quick"></div></article></div></section><section class="view" id="programs"><div class="page"><div class="sect"><h2>โปรแกรมที่ใช้</h2><button class="btn green" data-modal="โปรแกรม">＋ เพิ่มโปรแกรม</button></div><div class="quick"></div></div></section><section class="view" id="documents"><div class="page"><div class="sect"><h2>คลังเอกสาร</h2><button class="btn green" data-modal="เอกสาร">＋ เพิ่มเอกสาร</button></div><div class="doc-filter"><input class="form-control form-control-sm" id="docSearch" type="search" placeholder="ค้นหาเอกสาร" aria-label="ค้นหาเอกสาร"><select class="form-select form-select-sm" id="docCat" aria-label="กรองตามหมวดหมู่"><option value="">ทุกหมวดหมู่</option></select></div><div class="quick" id="docsGrid"></div></div></section><section class="view" id="tasks"><div class="page"><div class="sect"><h2>มอบหมายงาน</h2><button class="btn green" data-modal="งาน">＋ เพิ่มงาน</button></div><table class="table rtable"><thead><tr><th>ชื่องาน</th><th>ผู้รับผิดชอบ</th><th>กำหนดส่ง</th><th>สถานะ</th></tr></thead><tbody id="tasksBody"></tbody></table></div></section><section class="view" id="calendar"><div class="page"><div class="sect"><h2 id="calTitle">ปฏิทิน</h2><div class="cal-tools"><div class="seg" role="group" aria-label="มุมมองปฏิทิน"><button type="button" data-cal-view="day">วัน</button><button type="button" data-cal-view="week">สัปดาห์</button><button type="button" data-cal-view="month" class="on">เดือน</button></div><div class="cal-nav"><button class="btn white" id="calPrev" type="button" aria-label="ก่อนหน้า">‹</button><button class="btn white" id="calToday" type="button">วันนี้</button><button class="btn white" id="calNext" type="button" aria-label="ถัดไป">›</button></div><div class="cal-add"><button class="btn green" data-modal="กิจกรรม">＋ เพิ่มกิจกรรม</button><button class="btn green" data-modal="การลา">＋ บันทึกการลา</button></div></div></div><div class="cal-legend"><span class="lg lg-event">กิจกรรม</span><span class="lg lg-leave">การลา</span><span class="lg lg-gcal d-none" id="lgGcal">Google Calendar</span><span class="muted">กดที่รายการเพื่อดูรายละเอียด</span></div><div id="calView"></div><p class="muted mt-2 mb-0" id="calNote"></p><h3 class="cal-sub" id="calListTitle">กิจกรรมและนัดหมาย</h3><div class="rows" id="calEventList"></div><h3 class="cal-sub" id="calLeaveTitle">รายการลา</h3><table class="table rtable"><thead><tr><th>เจ้าหน้าที่</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th></tr></thead><tbody id="leaveBody"></tbody></table></div></section><section class="view" id="reports"><div class="page"><div class="sect"><h2>รายงานจากไฟล์ Excel</h2></div><p class="muted">เลือกไฟล์ Excel (.xlsx, .xls) หรือ .csv ระบบจะอ่านไฟล์และสร้างกราฟสรุปบนเครื่องของคุณ ไฟล์ไม่ถูกอัปโหลดหรือบันทึกไว้ที่ใด</p><label class="drop" id="rptDrop" for="rptFile"><span>📄 ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</span><small>รองรับ .xlsx .xls .csv ขนาดไม่เกิน 15 MB</small><input type="file" id="rptFile" accept=".xlsx,.xls,.csv" hidden></label><div id="rptWork" class="d-none"><div class="rpt-meta"><b id="rptFileName"></b> · <span id="rptInfo"></span></div><div class="rpt-controls"><div><label for="rptSheet">ชีต</label><select id="rptSheet" class="form-select form-select-sm"></select></div><div><label for="rptCat">แกนหมวดหมู่ (X)</label><select id="rptCat" class="form-select form-select-sm"></select></div><div><label for="rptAgg">วิธีรวมค่า</label><select id="rptAgg" class="form-select form-select-sm"><option value="sum">ผลรวม</option><option value="avg">ค่าเฉลี่ย</option><option value="count">จำนวนรายการ</option></select></div><div><label for="rptType">ชนิดกราฟ</label><select id="rptType" class="form-select form-select-sm"><option value="bar">แท่ง</option><option value="line">เส้น</option><option value="pie">วงกลม</option></select></div><div><label for="rptSort">เรียงลำดับ</label><select id="rptSort" class="form-select form-select-sm"><option value="file">ตามลำดับในไฟล์</option><option value="desc">มากไปน้อย</option></select></div></div><div class="rpt-vals"><label>ค่าที่ต้องการสรุป (Y) เลือกได้หลายคอลัมน์</label><div id="rptVals" class="rpt-checks"></div></div><div class="stats" id="rptKpi"></div><p class="muted" id="rptMsg"></p><div class="rpt-chart"><canvas id="rptChart"></canvas></div><button class="btn white" id="rptPng" type="button">⬇ บันทึกกราฟเป็นรูปภาพ</button><h3 class="cal-sub">ตัวอย่างข้อมูล (8 แถวแรก)</h3><div class="table-wrap"><table class="table" id="rptPreview"></table></div></div></div></section><section class="view" id="staff"><div class="page"><div class="sect"><h2>จัดการผู้ใช้งาน</h2><button class="btn green d-none" id="addUserBtn" type="button">＋ เพิ่มผู้ใช้</button></div><div id="userAdminNotice" class="notice">เมนูนี้สำหรับแอดมิน</div><div id="userTableWrap" class="table-responsive d-none"><table class="table align-middle rtable"><thead><tr><th>ชื่อ</th><th>Username</th><th>สิทธิ์</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="userTableBody"></tbody></table></div></div></section></main>
     <nav class="bottom-nav" aria-label="เมนูลัด">
       <button class="on" data-v="home"><span class="ic">🏠</span><span>ภาพรวม</span></button>
       <button data-v="calendar"><span class="ic">📅</span><span>ปฏิทิน</span></button>
@@ -1273,7 +1272,10 @@ function show(id) {
   document.querySelectorAll('[data-v]').forEach(x => x.classList.toggle('on', x.dataset.v === id));
   document.getElementById('title').textContent = names[id];
   document.body.classList.remove('nav-open');
-  window.scrollTo(0, 0)
+  window.scrollTo(0, 0);
+  try {
+    history.replaceState(null, '', '#' + id)
+  } catch {}
 }
 
 document.addEventListener('click', e => {
@@ -1582,7 +1584,11 @@ function hubApi(action, payload = {}) {
       const d = e.data || {};
       if (d.type !== 'pharmacy-hub-response' || d.id !== id) return;
       cleanup();
-      d.error ? reject(Error(d.error)) : resolve(d.result);
+      if (d.error) {
+        let msg = String(d.error).replace(/^[A-Za-z]*Error:\s*/, '');
+        if (msg === 'ไม่รองรับคำสั่งนี้') msg += ' — ระบบหลังบ้าน (Apps Script) อาจเป็นเวอร์ชันเก่า กรุณา Deploy Code.gs เวอร์ชันใหม่';
+        reject(Error(msg));
+      } else resolve(d.result);
     }
 
     function cleanup() {
@@ -1610,7 +1616,8 @@ function updateLoginUi() {
   document.getElementById('logoutBtn').classList.toggle('d-none', !currentUser);
   const badge = document.getElementById('userBadge');
   badge.classList.toggle('d-none', !currentUser);
-  if (currentUser) badge.textContent = currentUser.name + ' · ' + roleName(currentUser.role);
+  //if (currentUser) badge.textContent = currentUser.name + ' · ' + roleName(currentUser.role);
+  if (currentUser) badge.textContent = currentUser.name;
   document.getElementById('sideUser').textContent = currentUser ? currentUser.name + ' · ' + roleName(currentUser.role) : 'ยังไม่ได้เข้าสู่ระบบ';
   document.querySelectorAll('[data-protected="true"]').forEach(x => x.title = currentUser ? '' : 'เข้าสู่ระบบก่อนเปิดเมนูนี้');
   document.querySelectorAll('[data-role="admin"]').forEach(x => x.classList.toggle('d-none', !currentUser || currentUser.role !== 'admin'));
@@ -1637,6 +1644,7 @@ async function loginDialog() {
     if (currentUser.role === "admin") await refreshUsers();
     if (currentUser.mustChangePassword) await changePasswordDialog();
     loadData();
+    hubGoWantedView();
     hubToast('เข้าสู่ระบบสำเร็จ')
   }
 }
@@ -1880,7 +1888,10 @@ async function validateRestoredSession() {
     currentUser = null;
     sessionStorage.removeItem('pharmacyHubUser');
     updateLoginUi();
-    setUserAdminVisibility()
+    setUserAdminVisibility();
+    hubWantedView = (location.hash || '').slice(1) || null;
+    renderAll(null);
+    show('home')
   }
 }
 
@@ -2081,7 +2092,7 @@ const HUB_TASK_GROUPS = [
 ];
 const hubTaskGroup = t => HUB_TASK_GROUPS.find(g => g.values.includes(String(t.status || '').trim())) || HUB_TASK_GROUPS[0];
 const hubIsPendingLeave = l => ['', 'pending', 'รอพิจารณา'].includes(String(l.status || '').trim());
-let hubData = null, hubPeople = [], hubLastRecord = null, hubPublic = null, hubPublicLoading = false;
+let hubData = null, hubPeople = [], hubLastRecord = null, hubPublic = null, hubPublicLoading = false, hubPublicError = '';
 const hubCal = {
   view: (() => {
     try {
@@ -2322,7 +2333,10 @@ async function loadPublic() {
       Leave: d.Leave || []
     };
   } catch (err) {
-    console.warn('publicOverview:', err.message)
+    hubPublicError = /ไม่รองรับ|เข้าสู่ระบบ/.test(err.message || '')
+      ? 'ระบบหลังบ้าน (Apps Script) ยังเป็นเวอร์ชันเก่า ต้อง Deploy Code.gs เวอร์ชันใหม่ก่อน จึงจะแสดงข้อมูลภาพรวมโดยไม่ต้องล็อกอินได้'
+      : 'โหลดข้อมูลภาพรวมไม่สำเร็จ: ' + (err.message || '');
+    console.warn('publicOverview:', err.message);
   }
   hubPublicLoading = false;
   if (!hubData) {
@@ -2342,6 +2356,9 @@ function renderHome() {
   }).length : '–';
   hubEl('stLeave').textContent = d ? leave.filter(hubIsPendingLeave).length : '–';
   hubEl('homeNote').textContent = hubData ? '' : (hubPublic ? 'ข้อมูลสรุปสำหรับผู้เยี่ยมชม · เข้าสู่ระบบเพื่อดูรายละเอียดทั้งหมด' : hubHint());
+  const errBox = hubEl('homeError');
+  errBox.textContent = hubPublicError;
+  errBox.classList.toggle('d-none', !(hubPublicError && !hubData && !hubPublic && !hubPublicLoading));
 
   const bars = hubEl('statusBars');
   bars.replaceChildren();
@@ -2749,7 +2766,8 @@ async function hubGcalEnsure(rs, re) {
     need.forEach(([k]) => {
       if (hubGcal.months[k] === 'loading') hubGcal.months[k] = 'error'
     });
-    hubToast(err.message || 'โหลด Google Calendar ไม่สำเร็จ', 'error');
+    if (/ไม่รองรับ/.test(err.message || '')) hubGcal.enabled = false;
+      else hubToast(err.message || 'โหลด Google Calendar ไม่สำเร็จ', 'error');
   }
 }
 
@@ -3180,6 +3198,32 @@ document.addEventListener('click', async e => {
   }
 }, true);
 
+// ===== จำหน้าที่เปิดอยู่: รีเฟรชแล้วกลับมาหน้าเดิม =====
+let hubWantedView = null;
+
+function hubViewAllowed(v) {
+  return Object.prototype.hasOwnProperty.call(names, v) && v !== 'home' && (v !== 'staff' || (currentUser && currentUser.role === 'admin'))
+}
+
+function hubGoWantedView() {
+  const v = hubWantedView;
+  hubWantedView = null;
+  if (v && currentUser && hubViewAllowed(v)) show(v);
+}
+
+function hubApplyStartView() {
+  let v = '';
+  try {
+    v = decodeURIComponent((location.hash || '').slice(1))
+  } catch {}
+  if (!v || v === 'home' || !Object.prototype.hasOwnProperty.call(names, v)) return;
+  if (currentUser) {
+    if (hubViewAllowed(v) || v === 'staff') show(v)
+  } // มี session เก่าอยู่: เปิดหน้าเดิมทันที
+  else hubWantedView = v; // ยังไม่ล็อกอิน: จำไว้ ไปต่อหลังล็อกอิน
+}
+
 renderAll(null);
 loadPublic();
+hubApplyStartView();
 </script></body></html>
